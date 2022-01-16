@@ -4,6 +4,7 @@ import java.util.List;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
+import org.apache.rocketmq.client.consumer.listener.MessageListener;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
@@ -17,8 +18,10 @@ public class Consumer {
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("consumer_group");
 
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
-        consumer.setNamesrvAddr("192.168.101.4:9876");
-        consumer.subscribe("TOPIC_TEST", "*");
+        consumer.setNamesrvAddr("192.168.0.101:9876");
+        consumer.subscribe("TOPIC_TEST_A", "*");
+        consumer.subscribe("TOPIC_TEST_B", "*");
+
 
         consumer.registerMessageListener(new MessageListenerConcurrently() {
 
@@ -27,8 +30,8 @@ public class Consumer {
                 System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
 
 
-//                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-                return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+//                return ConsumeConcurrentlyStatus.RECONSUME_LATER;
             }
         });
 

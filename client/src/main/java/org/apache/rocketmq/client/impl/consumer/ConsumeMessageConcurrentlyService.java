@@ -80,6 +80,21 @@ public class ConsumeMessageConcurrentlyService implements ConsumeMessageService 
 
         this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("ConsumeMessageScheduledThread_"));
         this.cleanExpireMsgExecutors = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("CleanExpireMsgScheduledThread_"));
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("消费者目前队列中的消息数=" + consumeRequestQueue.size());
+                }
+            }
+        }, "计算消息队列中的消息数-线程").start();
+
     }
 
     public void start() {
@@ -225,6 +240,7 @@ public class ConsumeMessageConcurrentlyService implements ConsumeMessageService 
 
                 ConsumeRequest consumeRequest = new ConsumeRequest(msgThis, processQueue, messageQueue);
                 try {
+                    //
                     this.consumeExecutor.submit(consumeRequest);
                 } catch (RejectedExecutionException e) {
                     for (; total < msgs.size(); total++) {
@@ -378,6 +394,7 @@ public class ConsumeMessageConcurrentlyService implements ConsumeMessageService 
 
         @Override
         public void run() {
+
 
             System.out.println("线程池中的线程["+Thread.currentThread().getName()+"]开始消费处理消息.");
             if (this.processQueue.isDropped()) {
