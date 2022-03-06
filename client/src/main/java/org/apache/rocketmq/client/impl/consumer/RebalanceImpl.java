@@ -217,7 +217,7 @@ public abstract class RebalanceImpl {
     }
 
     public void doRebalance(final boolean isOrder) {
-        Map<String, SubscriptionData> subTable = this.getSubscriptionInner();
+        Map<String/* topicName */, SubscriptionData> subTable = this.getSubscriptionInner();
         if (subTable != null) {
             for (final Map.Entry<String, SubscriptionData> entry : subTable.entrySet()) {
                 final String topic = entry.getKey();
@@ -258,7 +258,9 @@ public abstract class RebalanceImpl {
                 break;
             }
             case CLUSTERING: {
+                // mqSet : 所有的Queue队列 (所有broker加在一起的Queue队列)
                 Set<MessageQueue> mqSet = this.topicSubscribeInfoTable.get(topic);
+                // cidAll : 在同一个group中, 消费相同topic的消费者
                 List<String> cidAll = this.mQClientFactory.findConsumerIdList(topic, consumerGroup);
                 if (null == mqSet) {
                     if (!topic.startsWith(MixAll.RETRY_GROUP_TOPIC_PREFIX)) {

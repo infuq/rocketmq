@@ -967,10 +967,18 @@ public class MQClientInstance {
     }
 
     public void doRebalance() {
+
+        /*
+         *
+         * consumerTable 中存储了当前JVM进程中, 不同group对应的消费者
+         *
+         *
+         */
         for (Map.Entry<String, MQConsumerInner> entry : this.consumerTable.entrySet()) {
             MQConsumerInner impl = entry.getValue();
             if (impl != null) {
                 try {
+                    // org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl.doRebalance
                     impl.doRebalance();
                 } catch (Throwable e) {
                     log.error("doRebalance exception", e);

@@ -219,6 +219,7 @@ public class ConsumeMessageConcurrentlyService implements ConsumeMessageService 
         final ProcessQueue processQueue,
         final MessageQueue messageQueue,
         final boolean dispatchToConsume) {
+        // consumeBatchSize = 1 (默认值)
         final int consumeBatchSize = this.defaultMQPushConsumer.getConsumeMessageBatchMaxSize();
         if (msgs.size() <= consumeBatchSize) {
             ConsumeRequest consumeRequest = new ConsumeRequest(msgs, processQueue, messageQueue);
@@ -229,6 +230,21 @@ public class ConsumeMessageConcurrentlyService implements ConsumeMessageService 
             }
         } else {
             for (int total = 0; total < msgs.size(); ) {
+
+                /*
+                 *
+                 * 假如 msgs 中包含32条消息, 假如 consumeBatchSize = 4,
+                 * 那么将32条消息拆分成8个consumeRequest提交到线程池中, 每个consumeRequest中包含4条消息.
+                 *
+                 *
+                 * 1  1  1  1  1  1  1  1  1  1  1  1 ...
+                 * ^        ^  ^        ^  ^        ^ ...
+                 *
+                 *
+                 * 由于consumeBatchSize = 1 (默认值), 因此32条消息会拆分成32个consumeRequest提交到线程池中
+                 *
+                 */
+
                 List<MessageExt> msgThis = new ArrayList<MessageExt>(consumeBatchSize);
                 for (int i = 0; i < consumeBatchSize; i++, total++) {
                     if (total < msgs.size()) {
