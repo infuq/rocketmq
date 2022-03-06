@@ -13,7 +13,7 @@ public class PullConsumer {
 
     public static void main(String[] args) throws MQClientException {
         DefaultMQPullConsumer consumer = new DefaultMQPullConsumer("myconsumerGroup");
-        consumer.setNamesrvAddr("127.0.0.1:9876");
+        consumer.setNamesrvAddr("192.168.0.100:9876");
         consumer.start();
 
         Set<MessageQueue> mqs = consumer.fetchSubscribeMessageQueues("broker-a");

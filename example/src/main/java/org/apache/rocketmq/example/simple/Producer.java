@@ -10,15 +10,17 @@ public class Producer {
     public static void main(String[] args) throws MQClientException, InterruptedException {
 
         DefaultMQProducer producer = new DefaultMQProducer("myproducerGroup");
+        producer.setNamesrvAddr("192.168.0.100:9876");
         producer.start();
 
         for (int i = 0; i < 128; i++)
             try {
                 {
-                    Message msg = new Message("TopicTest",
+                    Message msg = new Message("TOPIC_A",
                         "TagA",
                         "OrderID188",
                         "Hello world".getBytes(RemotingHelper.DEFAULT_CHARSET));
+
                     SendResult sendResult = producer.send(msg);
                     System.out.printf("%s%n", sendResult);
                 }

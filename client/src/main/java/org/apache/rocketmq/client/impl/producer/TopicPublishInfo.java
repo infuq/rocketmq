@@ -70,16 +70,19 @@ public class TopicPublishInfo {
         if (lastBrokerName == null) {
             return selectOneMessageQueue();
         } else {
+            // lastBrokerName != null, 说明存在发送失败的情况, 那么在重试的时候,就不能选择之前发送失败的broker, 需要选择其他的broker进行重试.
             int index = this.sendWhichQueue.getAndIncrement();
             for (int i = 0; i < this.messageQueueList.size(); i++) {
                 int pos = Math.abs(index++) % this.messageQueueList.size();
                 if (pos < 0)
                     pos = 0;
                 MessageQueue mq = this.messageQueueList.get(pos);
+                // 选择其他的broker
                 if (!mq.getBrokerName().equals(lastBrokerName)) {
                     return mq;
                 }
             }
+            // 说明只有一个broker, 那么就从这个发送失败的broker中选择其他的queue进行重试
             return selectOneMessageQueue();
         }
     }
