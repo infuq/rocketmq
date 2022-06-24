@@ -1064,6 +1064,8 @@ public class MQClientAPIImpl {
         final int maxConsumeRetryTimes
     ) throws RemotingException, MQBrokerException, InterruptedException {
         ConsumerSendMsgBackRequestHeader requestHeader = new ConsumerSendMsgBackRequestHeader();
+
+        // code = CONSUMER_SEND_MSG_BACK ,  Broker会在org.apache.rocketmq.broker.processor.SendMessageProcessor.processRequest方法中处理消费者发送的request请求
         RemotingCommand request = RemotingCommand.createRequestCommand(RequestCode.CONSUMER_SEND_MSG_BACK, requestHeader);
 
         requestHeader.setGroup(consumerGroup);

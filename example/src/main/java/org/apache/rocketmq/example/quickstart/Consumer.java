@@ -20,7 +20,7 @@ public class Consumer {
         consumer.setNamesrvAddr("192.168.0.100:9876");
         consumer.subscribe("TOPIC_TEST_2", "*");
 
-if (1==2) {
+if (1==1) {
     consumer.registerMessageListener(new MessageListenerConcurrently() {
 
         @Override

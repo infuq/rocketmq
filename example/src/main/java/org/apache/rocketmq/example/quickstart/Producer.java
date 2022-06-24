@@ -21,11 +21,11 @@ public class Producer {
         producer.start();
 
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             try {
                 Message msg = new Message("TOPIC_TEST_2", "TagA", ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
                 SendResult sendResult;
-                if (1 == 1)
+                if (1 == 2)
                     sendResult = producer.send(msg);
                 else {
                     sendResult = producer.send(msg, new MessageQueueSelector() {

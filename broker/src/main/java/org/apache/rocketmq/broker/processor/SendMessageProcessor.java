@@ -67,6 +67,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
                                           RemotingCommand request) throws RemotingCommandException {
         SendMessageContext mqtraceContext;
         switch (request.getCode()) {
+            // 消费者存在消费失败的情况,发送给Broker的回执
             case RequestCode.CONSUMER_SEND_MSG_BACK:
                 return this.consumerSendMsgBack(ctx, request);
             default:
@@ -186,6 +187,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
             newTopic = MixAll.getDLQTopic(requestHeader.getGroup());
             queueIdInt = Math.abs(this.random.nextInt() % 99999999) % DLQ_NUMS_PER_GROUP;
 
+            // 放入死信队列
             topicConfig = this.brokerController.getTopicConfigManager().createTopicInSendMessageBackMethod(newTopic,
                 DLQ_NUMS_PER_GROUP,
                 PermName.PERM_WRITE, 0
@@ -204,7 +206,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
         }
 
         MessageExtBrokerInner msgInner = new MessageExtBrokerInner();
-        msgInner.setTopic(newTopic);
+        msgInner.setTopic(newTopic);// 重试队列
         msgInner.setBody(msgExt.getBody());
         msgInner.setFlag(msgExt.getFlag());
         MessageAccessor.setProperties(msgInner, msgExt.getProperties());
